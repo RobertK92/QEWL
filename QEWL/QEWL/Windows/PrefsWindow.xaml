@@ -1,0 +1,19 @@
+﻿<Window x:Class="QEWL.PrefsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QEWL"
+        mc:Ignorable="d"
+        Title="Preferences" Background="{DynamicResource D_BrushBarTextBoxBackground}" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" VerticalAlignment="Top" HorizontalAlignment="Left" d:DesignHeight="319" Width="257.333" Height="319">
+  <Grid Background="{DynamicResource D_BrushBarTextBoxBackground}" HorizontalAlignment="Center" VerticalAlignment="Center" Height="290" Width="250">
+    <ComboBox x:Name="ComboBoxTheme" HorizontalAlignment="Left" Margin="120,10,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="1,0.5"/>
+    <TextBlock x:Name="TextBlockTheme" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Theme" VerticalAlignment="Top" Foreground="{DynamicResource D_BrushTextBoxForeground}" RenderTransformOrigin="0,0.5" Width="109" Height="22" FontSize="14.667"/>
+    <Button x:Name="ButtonCancel" Content="Cancel" HorizontalAlignment="Left" Margin="10,260,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0,1"/>
+    <Button x:Name="ButtonSave" Content="Save" HorizontalAlignment="Left" Margin="164,260,0,0" VerticalAlignment="Top" Width="76" RenderTransformOrigin="1,1"/>
+    <ComboBox x:Name="ComboBoxKeyModifier" HorizontalAlignment="Left" Margin="120,37,0,0" VerticalAlignment="Top" Width="120"/>
+    <ComboBox x:Name="ComboBoxActivationKey" HorizontalAlignment="Left" Margin="120,64,0,0" VerticalAlignment="Top" Width="120"/>
+    <TextBlock x:Name="TextBlockKeyModifier" HorizontalAlignment="Left" Margin="10,37,0,0" TextWrapping="Wrap" Text="Key Modifier" VerticalAlignment="Top" Foreground="{DynamicResource D_BrushTextBoxForeground}" RenderTransformOrigin="0,0.5" Width="109" Height="22" FontSize="14.667"/>
+    <TextBlock x:Name="TextBlockKey" HorizontalAlignment="Left" Margin="10,64,0,0" TextWrapping="Wrap" Text="Activation Key" VerticalAlignment="Top" Foreground="{DynamicResource D_BrushTextBoxForeground}" RenderTransformOrigin="0,0.5" Width="109" Height="22" FontSize="14.667"/>
+  </Grid>
+</Window>

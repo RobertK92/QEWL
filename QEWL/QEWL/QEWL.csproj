@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{53FF9CD7-57B6-45D9-8A5B-2182A4033E98}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QEWL</RootNamespace>
     <AssemblyName>QEWL</AssemblyName>
@@ -33,9 +33,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>QEWL.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -54,7 +58,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
+    <Compile Include="Windows\PrefsWindow.xaml.cs">
+      <DependentUpon>PrefsWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Themes\DarkTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\LightTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -62,10 +77,34 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Source\Utils\Extensions.cs" />
+    <Compile Include="Source\Utils\KeyboardHooks.cs" />
+    <Compile Include="Source\Utils\KeyboardHooksEventArgs.cs" />
+    <Compile Include="Source\Utils\KeyModifier.cs" />
+    <Compile Include="Source\Utils\Log.cs" />
+    <Compile Include="Source\Commands\Command.cs" />
+    <Compile Include="Source\Commands\PrefsCommand.cs" />
+    <Compile Include="Source\Commands\ShutdownCommand.cs" />
+    <Compile Include="Source\Commands\TestCommand.cs" />
+    <Compile Include="Source\Preview\Previewer.cs" />
+    <Compile Include="Source\Query\QueryDictionary.cs" />
+    <Compile Include="Source\Query\QueryHandlers\CommandQueryHandler.cs" />
+    <Compile Include="Source\Query\QueryHandlers\QueryHandler.cs" />
+    <Compile Include="Source\Query\QueryHandlers\SystemQueryHandler.cs" />
+    <Compile Include="Source\Query\QueryHandlers\WebQueryHandler.cs" />
+    <Compile Include="Source\Query\QueryResultItem.cs" />
+    <Compile Include="Source\Query\QueryResults.cs" />
+    <Compile Include="Source\Prefs.cs" />
+    <Compile Include="Source\Theme.cs" />
+    <Compile Include="Source\Win32\Native.cs" />
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows\PrefsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -94,6 +133,21 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\CommandIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\FolderIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\TransparantIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\WebIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

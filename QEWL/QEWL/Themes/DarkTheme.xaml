@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:BanditBar.Themes">
+
+    <SolidColorBrush x:Key="D_BrushBarTextBoxBackground" Color="#7F232323"/>
+    <SolidColorBrush x:Key="D_BrushTextBoxForeground" Color="#FFE2E2E2"/>
+    <SolidColorBrush x:Key="D_ProgressBarForeground" Color="#7FFFFFFF"/>
+    <SolidColorBrush x:Key="D_BorderBrush" Color="#33FFFFFF"/>
+
+</ResourceDictionary>
