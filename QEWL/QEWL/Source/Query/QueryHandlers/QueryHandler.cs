@@ -109,7 +109,7 @@ namespace QEWL
             OnQuery(text);
         }
 
-        protected void DistributeResultInDictionaryTree(QueryResultItem result, QueryDictionary dictionary)
+        protected void DistributeResultInDictionaryTree(QueryResultItem result, QueryNode dictionary)
         {
             #region Explaination
             // Distribute this result over it's alphabetical children.
@@ -127,32 +127,34 @@ namespace QEWL
             string name = result.ResultName.ToLower();
             if (!string.IsNullOrWhiteSpace(name))
             {
-                QueryDictionary parent = dictionary;
+                QueryNode parent = dictionary;
                 foreach (char letter in name)
                 {
                     lock (_queryDictLock)
                     {
-                        if (!parent.ContainsKey(letter))
+                        QueryNode inner = parent.FindInnerNode(letter);
+                        if (inner == null)
                         {
-                            parent.Add(letter, new QueryDictionary());
+                            inner = new QueryNode(letter);
+                            parent.nodes.Add(inner);
                         }
-
-                        QueryDictionary lettersDict = parent[letter];
-                        lettersDict.results.Add(result);
-                        parent = lettersDict;
+                        
+                        inner.results.Add(result);
+                        parent = inner;
                     }
                 }
             }
         }
 
-        protected QueryDictionary FindDeepestDictionaryForQuery(string query, QueryDictionary parent)
+        protected QueryNode FindDeepestDictionaryForQuery(string query, QueryNode parent)
         {
-            QueryDictionary result = null;
+            QueryNode result = null;
             foreach (char letter in query)
             {
-                if (parent.ContainsKey(letter))
+                QueryNode inner = parent.FindInnerNode(letter);
+                if (inner != null)
                 {
-                    result = parent[letter];
+                    result = inner;
                 }
                 if (result != null)
                 {

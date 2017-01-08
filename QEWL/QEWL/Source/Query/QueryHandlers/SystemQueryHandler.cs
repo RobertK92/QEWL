@@ -24,7 +24,7 @@ namespace QEWL
         public const string FOLDER_ICON_IMAGE_PATH = @"Images\\FolderIcon.png";
         public const int ICON_FETCH_INTERVAL_MS = 100;
 
-        public QueryDictionary RootQueryDictionary  { get; private set; }
+        public QueryNode RootQueryDictionary  { get; private set; }
         public List<string> RootIgnorePaths         { get; private set; }
 
         private Queue<Action> _iconResultInvokers = new Queue<Action>();
@@ -33,7 +33,7 @@ namespace QEWL
         public SystemQueryHandler(MainWindow mainWindow)
             : base(mainWindow)
         {
-            RootQueryDictionary = new QueryDictionary();
+            RootQueryDictionary = new QueryNode(' ');
             RootIgnorePaths = new List<string>();
             //
             string winPath = Path.GetPathRoot(Environment.SystemDirectory);
@@ -139,7 +139,7 @@ namespace QEWL
                 return;
             
             string lowerCaseQuery = query.ToLower();
-            QueryDictionary deepestDict = FindDeepestDictionaryForQuery(lowerCaseQuery, RootQueryDictionary);
+            QueryNode deepestDict = FindDeepestDictionaryForQuery(lowerCaseQuery, RootQueryDictionary);
             if (deepestDict != null)
             {
                 ShowResults(deepestDict.results, lowerCaseQuery);

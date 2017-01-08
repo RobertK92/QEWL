@@ -96,7 +96,7 @@ namespace Utils
             LogStackInfoForMessages = true;
             CharacterCountBeforeStackInfoConsole = 64;
             CharacterCountBeforeStackInfoFile = 100;
-            MemoryErrorThreshold = 950;
+            MemoryErrorThreshold = 5000;
             MemoryWarningThreshold = 500;
 
             _stackFrame = 3;
@@ -164,7 +164,16 @@ namespace Utils
         /// </summary>
         public static void ReportMemoryUsage()
         {
-            long mb = Process.GetCurrentProcess().WorkingSet64 / 1000000;
+            long mb = -1;
+            try
+            {
+                mb = Process.GetCurrentProcess().WorkingSet64 / 1000000;
+            }
+            catch(OutOfMemoryException e)
+            {
+                Exception(e);
+            }
+
             string msg = string.Format("Memory usage: {0} MB", mb);
             if (mb > MemoryErrorThreshold)
             {
