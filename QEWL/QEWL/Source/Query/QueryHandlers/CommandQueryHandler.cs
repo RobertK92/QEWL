@@ -20,6 +20,7 @@ namespace QEWL
             : base(mainWindow)
         {
             /* Only use lowercases for command keys! */
+            _commands.Add("/scan", new ScanCommand());
             _commands.Add("/prefs", new PrefsCommand());
             _commands.Add("/shutdown", new ShutdownCommand());
         }

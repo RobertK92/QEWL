@@ -14,8 +14,6 @@ namespace QEWL
 {
     public partial class MainWindow : Window
     {
-        
-
         public const float HEIGHT_PERCENTAGE = 0.15f;
         public const float WIDTH_PERCENTAGE = 0.5f;
         public const int ACTIVATION_KEY_TIMER_INTERVAL_MS = 100;
@@ -28,6 +26,7 @@ namespace QEWL
         public readonly double HeightTotal;
 
         public bool SearchResultsPaneIsVisible { get; private set; }
+        public Dictionary<Type, QueryHandler> QueryHandlers { get; private set; }
 
         private KeyboardHooks _hooks;
         private DispatcherTimer _activationKeyTimer;
@@ -39,12 +38,13 @@ namespace QEWL
         private string _lastSuccessfulQuery;
 
         private QueryHandler _activeQueryHandler;
-        private Dictionary<Type, QueryHandler> _queryHandlers = new Dictionary<Type, QueryHandler>();
         private Previewer _previewer;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            QueryHandlers = new Dictionary<Type, QueryHandler>();
 
             ListBoxResults.SelectionMode = SelectionMode.Single;
 
@@ -59,16 +59,16 @@ namespace QEWL
             HideResultsPane();
             ResetLocation();
 
-            _queryHandlers.Add(typeof(CommandQueryHandler), new CommandQueryHandler(this));
-            _queryHandlers.Add(typeof(SystemQueryHandler), new SystemQueryHandler(this));
-            _queryHandlers.Add(typeof(WebQueryHandler), new WebQueryHandler(this));
+            QueryHandlers.Add(typeof(CommandQueryHandler), new CommandQueryHandler(this));
+            QueryHandlers.Add(typeof(SystemQueryHandler), new SystemQueryHandler(this));
+            QueryHandlers.Add(typeof(WebQueryHandler), new WebQueryHandler(this));
 
             Log.ReportMemoryUsage();
-            foreach (KeyValuePair<Type, QueryHandler> qHandlers in _queryHandlers)
+            foreach (KeyValuePair<Type, QueryHandler> qHandlers in QueryHandlers)
             {
-                qHandlers.Value.OnQueryBegin += () => { FrameLoadResults.Visibility = Visibility.Visible; };
-                qHandlers.Value.OnQueryEnd += (QueryResults results) => { FrameLoadResults.Visibility = Visibility.Hidden; };
-                qHandlers.Value.OnScanComplete += () => { Query(_cachedQuery); };
+                qHandlers.Value.OnQueryBegin    += () => { FrameLoadResults.Visibility = Visibility.Visible; };
+                qHandlers.Value.OnQueryEnd      += (QueryResults results) => { FrameLoadResults.Visibility = Visibility.Hidden; };
+                qHandlers.Value.OnScanComplete  += () => { Query(_cachedQuery); };
                 qHandlers.Value.Scan();
             }
 
@@ -192,17 +192,17 @@ namespace QEWL
             {
                 if (query.StartsWith(CMD_PREFIX))
                 {
-                    _activeQueryHandler = _queryHandlers[typeof(CommandQueryHandler)];
+                    _activeQueryHandler = QueryHandlers[typeof(CommandQueryHandler)];
                     _activeQueryHandler.Query(query);
                 }
                 else if (query.StartsWith(WEB_PREFIX))
                 {
-                    _activeQueryHandler = _queryHandlers[typeof(WebQueryHandler)];
+                    _activeQueryHandler = QueryHandlers[typeof(WebQueryHandler)];
                     _activeQueryHandler.Query(query);
                 }
                 else // System search
                 {
-                    _activeQueryHandler = _queryHandlers[typeof(SystemQueryHandler)];
+                    _activeQueryHandler = QueryHandlers[typeof(SystemQueryHandler)];
                     _activeQueryHandler.Query(query);
                 }
                 _lastSuccessfulQuery = query;

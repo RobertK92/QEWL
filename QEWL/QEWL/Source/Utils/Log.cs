@@ -57,6 +57,11 @@ namespace Utils
         public static bool PauseOnError { get; set; }
 
         /// <summary>
+        /// Whether or not an error should also cause an assert.
+        /// </summary>
+        public static bool AssertOnError { get; set; }
+
+        /// <summary>
         /// Whether or not caller info (Class, Method, Line numbers) should be logged for errors.
         /// (default = true).
         /// </summary>
@@ -91,6 +96,7 @@ namespace Utils
             UseConsole = (GetConsoleWindow() != IntPtr.Zero);
             UseDumpFile = true;
 
+            AssertOnError = false;
             LogStackInfoForErrors = true;
             LogStackInfoForWarnings = true;
             LogStackInfoForMessages = true;
@@ -230,7 +236,8 @@ namespace Utils
         public static void Error(object errorMessage)
         {
             LogAny(string.Format("--> [ERROR]: {0}", errorMessage.ToString()), LogType.Error);
-
+            Trace.Assert(!AssertOnError, "[ERROR]" + Environment.NewLine, errorMessage.ToString() + Environment.NewLine);
+            
             if (PauseOnError)
             {
                 // TODO: pause execution.

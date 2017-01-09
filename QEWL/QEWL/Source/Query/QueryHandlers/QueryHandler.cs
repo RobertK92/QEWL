@@ -72,6 +72,12 @@ namespace QEWL
 
         public void Scan()
         {
+            if(IsScanning)
+            {
+                Log.Warning("Attempting to begin new scan while already scanning");
+                return;
+            }
+
             Log.Message(string.Format("Scanning {0}...", GetType().Name));
             IsScanning = true;
             OnScan();

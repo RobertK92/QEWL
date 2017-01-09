@@ -43,9 +43,12 @@ namespace QEWL
             RootIgnorePaths.Add(winPath + "Windows");
             RootIgnorePaths.Add(winPath + "System Volume Information");
         }
-
+        
         protected override void OnScan()
         {
+            RootQueryDictionary.nodes.Clear();
+            RootQueryDictionary.results.Clear();
+            
             recDepth = 0;
             BackgroundWorker worker = new BackgroundWorker();
             Stopwatch timer = Stopwatch.StartNew();
@@ -103,11 +106,6 @@ namespace QEWL
                         ScanSubDirsAndFiles(dir);
                         QueryResultItem result = new QueryResultItem(FOLDER_ICON_IMAGE_PATH, dir.Name, dir.FullName);
                         DistributeResultInDictionaryTree(result, RootQueryDictionary);
-
-                        long mem = Process.GetCurrentProcess().WorkingSet64 / 1000000;
-                        string memStr = string.Format("{0} MB", Math.Abs(mem - prevMem).ToString());
-                        prevMem = mem;
-                        Log.Message(string.Format("Scanned {0} in {1} seconds ({2})", (dir.FullName + "\\*").PadRight(42), timer.Elapsed.TotalSeconds.ToString("F2").PadRight(5), memStr));
                     });
                 }
                 else
