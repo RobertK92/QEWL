@@ -18,10 +18,7 @@ namespace QEWL
 {
     public class SystemQueryHandler : QueryHandler
     {
-        // Temp
-        private const int RECURSION_DEPTH = int.MaxValue;
-
-        public const string FOLDER_ICON_IMAGE_PATH = @"Images\\FolderIcon.png";
+        //public const string FOLDER_ICON_IMAGE_PATH = @"Images\\FolderIcon.png";
         public const int ICON_FETCH_INTERVAL_MS = 100;
 
         public QueryNode RootQueryDictionary  { get; private set; }
@@ -61,7 +58,7 @@ namespace QEWL
                 Parallel.ForEach(readyDrives, (DriveInfo drive) =>
                 {
                     Log.Message(string.Format("Scanning drive {0}: [{1}] ASync...", drive.VolumeLabel, drive.Name));
-                    QueryResultItem result = new QueryResultItem(FOLDER_ICON_IMAGE_PATH, drive.Name, drive.Name);
+                    QueryResultItem result = new QueryResultItem(true, drive.Name, drive.Name);
                     DistributeResultInDictionaryTree(result, RootQueryDictionary);
                     ScanSubDirsAndFiles(drive.RootDirectory, true);
                 });   
@@ -84,9 +81,9 @@ namespace QEWL
         {
             // temp
             if(recDepth == 0)
-                Log.Warning(string.Format("Temporary using recursion depth limit ({0}) for debugging purposes", RECURSION_DEPTH));
+                Log.Warning(string.Format("Temporary using recursion depth limit ({0}) for debugging purposes", DebugOptions.SystemQueryDepthLimit));
             recDepth++;
-            if (recDepth >= RECURSION_DEPTH)
+            if (recDepth >= DebugOptions.SystemQueryDepthLimit)
             {
                 return;
             }
@@ -104,7 +101,7 @@ namespace QEWL
                     {
                         Stopwatch timer = Stopwatch.StartNew();
                         ScanSubDirsAndFiles(dir);
-                        QueryResultItem result = new QueryResultItem(FOLDER_ICON_IMAGE_PATH, dir.Name, dir.FullName);
+                        QueryResultItem result = new QueryResultItem(true, dir.Name, dir.FullName);
                         DistributeResultInDictionaryTree(result, RootQueryDictionary);
                     });
                 }
@@ -113,7 +110,7 @@ namespace QEWL
                     foreach (DirectoryInfo dir in dirs)
                     {
                         ScanSubDirsAndFiles(dir);
-                        QueryResultItem result = new QueryResultItem(FOLDER_ICON_IMAGE_PATH, dir.Name, dir.FullName);
+                        QueryResultItem result = new QueryResultItem(true, dir.Name, dir.FullName);
                         DistributeResultInDictionaryTree(result, RootQueryDictionary);
                     }
                 }

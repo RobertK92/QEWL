@@ -29,7 +29,7 @@ namespace QEWL
         {
 
         }
-
+        
         protected override void OnQuery(string text)
         {
             QueryResults results = new QueryResults();

@@ -12,7 +12,7 @@ using Native;
 namespace QEWL
 {    
     using Image = System.Windows.Controls.Image;
-
+    
     public class Previewer
     {
         public readonly Grid PreviewGrid;
@@ -32,29 +32,34 @@ namespace QEWL
 
         public virtual void PreviewFromQueryResultItem(QueryResultItem item)
         {
-            PreviewDefault(item);
-            /*string extension = Path.GetExtension(item.ResultDesc);
-            if(extension.EndsWith(".jpg") || extension.EndsWith(".png"))
-            {
-                Uri uri = new Uri(item.ResultDesc, UriKind.Absolute);
-                BitmapImage img = new BitmapImage(uri);
-                
-                PreviewImage.Width = img.Width;
-                PreviewImage.Height = img.Height;
-                PreviewImage.Source = img;
+            string extension = Path.GetExtension(item.ResultDesc);
 
+            PreviewName.Text = item.ResultName;
+            PreviewDesc.Text = item.ResultDesc;
+
+            if (BitmapHelper.IsSupportedFormat(extension)) 
+            {
+                PreviewPicture(item, extension);
             }
             else
             {
                 PreviewDefault(item);
-            }*/
+            }
+        }
+
+        private void PreviewPicture(QueryResultItem item, string extension)
+        {
+            Uri uri = new Uri(item.ResultDesc, UriKind.Absolute);
+            BitmapImage img = new BitmapImage(uri);
+            
+            PreviewImage.Width = img.Height;
+            PreviewImage.Height = img.Height;
+            PreviewImage.UpdateLayout();
+            PreviewImage.Source = img;   
         }
 
         private void PreviewDefault(QueryResultItem item)
         {
-            PreviewName.Text = item.ResultName;
-            PreviewDesc.Text = item.ResultDesc;
-
             if (item.ResultIconBitmap != null)
             {
                 IntPtr iIcon = Win32.GetIconIndex(item.ResultDesc);
@@ -66,6 +71,8 @@ namespace QEWL
                     if (icon != null)
                     {
                         ImageSource imgSource = icon.ToImageSource();
+                        PreviewImage.Width = imgSource.Width;
+                        PreviewImage.Height = imgSource.Height;
                         PreviewImage.Source = imgSource;
                     }
                 }
@@ -79,7 +86,11 @@ namespace QEWL
                         BitmapImage img = new BitmapImage(new Uri(item.ResultIcon, UriKind.Absolute));
                         _resourceIconCache.Add(item.ResultIcon, img);
                     }
-                    PreviewImage.Source = _resourceIconCache[item.ResultIcon];
+
+                    BitmapImage imgSource = _resourceIconCache[item.ResultIcon];
+                    PreviewImage.Width = imgSource.Width;
+                    PreviewImage.Height = imgSource.Height;
+                    PreviewImage.Source = imgSource;
                 }
             }
         }

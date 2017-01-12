@@ -136,6 +136,10 @@ namespace QEWL
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
+            PreviewName.Text = string.Empty;
+            PreviewDesc.Text = string.Empty;
+            PreviewImage.Source = null;
+
             string text = TextBoxSearchBar.Text;
             _lastSuccessfulQuery = string.Empty;
             _cachedQuery = text;
@@ -179,7 +183,7 @@ namespace QEWL
                 _queryTimer.Stop();
             }
             _queryTimer.Start();
-
+            
             // Scroll to top
             if (ListBoxResults.HasItems)
             {

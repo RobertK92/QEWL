@@ -36,7 +36,7 @@
             </Frame.Content>
         </Frame>
         <Grid x:Name="PreviewGrid" HorizontalAlignment="Left" Height="440" VerticalAlignment="Top" Width="494" Margin="496,90,0,0">
-            <Image x:Name="PreviewImage" RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased"  HorizontalAlignment="Center" Height="238" VerticalAlignment="Center" Width="246" Margin="124,50,124,152" Source="../Images/TransparantIcon.png" UseLayoutRounding="True"/>
+            <Image x:Name="PreviewImage" RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased" Margin="10,10,10,157" Source="../Images/TransparantIcon.png" UseLayoutRounding="True" MaxWidth="456" MaxHeight="420"/>
             <TextBlock x:Name="PreviewName" TextWrapping="Wrap" Margin="44,288,28,121" Height="31" Foreground="{DynamicResource D_BrushTextBoxForeground}" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" Width="422" HorizontalAlignment="Center"/>
             <TextBlock x:Name="PreviewDesc" TextWrapping="Wrap" Margin="44,319,28,31" Foreground="{DynamicResource D_BrushTextBoxForeground}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="422" Height="90"/>
         </Grid>

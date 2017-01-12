@@ -58,7 +58,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DebugOptions.cs" />
     <Compile Include="Source\Commands\ScanCommand.cs" />
+    <Compile Include="Source\Utils\BitmapHelper.cs" />
     <Compile Include="Windows\PrefsWindow.xaml.cs">
       <DependentUpon>PrefsWindow.xaml</DependentUpon>
     </Compile>
