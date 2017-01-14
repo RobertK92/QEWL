@@ -95,7 +95,7 @@
     <Compile Include="Source\Query\QueryHandlers\QueryHandler.cs" />
     <Compile Include="Source\Query\QueryHandlers\SystemQueryHandler.cs" />
     <Compile Include="Source\Query\QueryHandlers\WebQueryHandler.cs" />
-    <Compile Include="Source\Query\QueryResultItem.cs" />
+    <Compile Include="Source\Query\SystemQueryResultItem.cs" />
     <Compile Include="Source\UI\UIResults.cs" />
     <Compile Include="Source\Prefs.cs" />
     <Compile Include="Source\Theme.cs" />

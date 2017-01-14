@@ -22,7 +22,7 @@ namespace QEWL
 
         //public QueryNode RootQueryDictionary        { get; private set; }
         public List<string> RootIgnorePaths         { get; private set; }
-        public List<QueryResultItem> BigResultList  { get; private set; }
+        public List<SystemQueryResultItem> BigResultList  { get; private set; }
 
         private Queue<Action> _iconResultInvokers = new Queue<Action>();
         private DispatcherTimer _iconTimer = new DispatcherTimer();
@@ -30,7 +30,7 @@ namespace QEWL
         public SystemQueryHandler(MainWindow mainWindow)
             : base(mainWindow)
         {
-            BigResultList = new List<QueryResultItem>();
+            BigResultList = new List<SystemQueryResultItem>();
             RootIgnorePaths = new List<string>();
             
             string winPath = Path.GetPathRoot(Environment.SystemDirectory);
@@ -55,7 +55,7 @@ namespace QEWL
                 Parallel.ForEach(readyDrives, (DriveInfo drive) =>
                 {
                     Log.Message(string.Format("Scanning drive {0}: [{1}] ASync...", drive.VolumeLabel, drive.Name));
-                    QueryResultItem result = new QueryResultItem(drive.Name);
+                    SystemQueryResultItem result = new SystemQueryResultItem(drive.Name);
                     AddItem(result);
                     ScanSubDirsAndFiles(drive.RootDirectory, true);
                 });
@@ -79,7 +79,7 @@ namespace QEWL
             BigResultList = BigResultList.Where(x => x != null).OrderBy(y => Path.GetFileName(y.path)).ToList();
         }
 
-        private void AddItem(QueryResultItem item)
+        private void AddItem(SystemQueryResultItem item)
         {
             if(item != null)
                 BigResultList.Add(item);
@@ -111,7 +111,7 @@ namespace QEWL
                     {
                         Stopwatch timer = Stopwatch.StartNew();
                         ScanSubDirsAndFiles(dir);
-                        QueryResultItem result = new QueryResultItem(dir.FullName);
+                        SystemQueryResultItem result = new SystemQueryResultItem(dir.FullName);
                         AddItem(result);
                     });
                 }
@@ -120,7 +120,7 @@ namespace QEWL
                     foreach (DirectoryInfo dir in dirs)
                     {
                         ScanSubDirsAndFiles(dir);
-                        QueryResultItem result = new QueryResultItem(dir.FullName);
+                        SystemQueryResultItem result = new SystemQueryResultItem(dir.FullName);
                         AddItem(result);
                     }
                 }
@@ -128,7 +128,7 @@ namespace QEWL
                 // Scan files.
                 foreach (FileInfo file in files)
                 {
-                    QueryResultItem result = new QueryResultItem(file.FullName);
+                    SystemQueryResultItem result = new SystemQueryResultItem(file.FullName);
                     AddItem(result);
                 }
             }
