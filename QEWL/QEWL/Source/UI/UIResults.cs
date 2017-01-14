@@ -3,14 +3,14 @@ using System.Linq;
 
 namespace QEWL
 {
-    public class QueryResults : List<QueryResultItem>
+    public class UIResults : List<UIResultItem>
     {
-        public IOrderedEnumerable<QueryResultItem> SortByNameRelevance(string name)
+        public IOrderedEnumerable<UIResultItem> SortByNameRelevance(string name)
         {
             return this.OrderByDescending(x => QueryOrderNameRelevance(name.ToLower(), x.ResultName.ToLower()));
         }
 
-        public IOrderedEnumerable<QueryResultItem> SortByUriLength()
+        public IOrderedEnumerable<UIResultItem> SortByUriLength()
         {
             return this.OrderByDescending(x => x.ResultDesc.Length);
         }
@@ -24,19 +24,6 @@ namespace QEWL
             if (name.Contains(query))
                 return 0;
             return -1;
-        }
-    }
-
-    public static class QueryResultsExtensions
-    {
-        public static QueryResults MakeQueryResults(this IEnumerable<QueryResultItem> b)
-        {
-            QueryResults results = new QueryResults();
-            foreach (QueryResultItem item in b)
-            {
-                results.Add(item);
-            }
-            return results;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace QEWL
             PreviewDesc = previewDesc;
         }
 
-        public virtual void PreviewFromQueryResultItem(QueryResultItem item)
+        public virtual void PreviewFromQueryResultItem(UIResultItem item)
         {
             string extension = Path.GetExtension(item.ResultDesc);
 
@@ -47,7 +47,7 @@ namespace QEWL
             }
         }
 
-        private void PreviewPicture(QueryResultItem item, string extension)
+        private void PreviewPicture(UIResultItem item, string extension)
         {
             Uri uri = new Uri(item.ResultDesc, UriKind.Absolute);
             BitmapImage img = new BitmapImage(uri);
@@ -58,7 +58,7 @@ namespace QEWL
             PreviewImage.Source = img;   
         }
 
-        private void PreviewDefault(QueryResultItem item)
+        private void PreviewDefault(UIResultItem item)
         {
             if (item.ResultIconBitmap != null)
             {

@@ -60,6 +60,7 @@
     </ApplicationDefinition>
     <Compile Include="DebugOptions.cs" />
     <Compile Include="Source\Commands\ScanCommand.cs" />
+    <Compile Include="Source\UI\UIResultItem.cs" />
     <Compile Include="Source\Utils\BitmapHelper.cs" />
     <Compile Include="Windows\PrefsWindow.xaml.cs">
       <DependentUpon>PrefsWindow.xaml</DependentUpon>
@@ -95,7 +96,7 @@
     <Compile Include="Source\Query\QueryHandlers\SystemQueryHandler.cs" />
     <Compile Include="Source\Query\QueryHandlers\WebQueryHandler.cs" />
     <Compile Include="Source\Query\QueryResultItem.cs" />
-    <Compile Include="Source\Query\QueryResults.cs" />
+    <Compile Include="Source\UI\UIResults.cs" />
     <Compile Include="Source\Prefs.cs" />
     <Compile Include="Source\Theme.cs" />
     <Compile Include="Source\Win32\Native.cs" />

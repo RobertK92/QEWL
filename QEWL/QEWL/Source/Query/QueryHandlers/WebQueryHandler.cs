@@ -21,16 +21,16 @@ namespace QEWL
 
         }
 
-        protected override bool OnConfirmed(QueryResultItem result)
+        protected override bool OnConfirmed(UIResultItem result)
         {
             return true;
         }
 
         protected override void OnQuery(string text)
         {
-            QueryResults results = new QueryResults();
+            UIResults results = new UIResults();
             //TODO: implement query
-            results.Add(new QueryResultItem(Environment.CurrentDirectory + "/Images/WebIcon.png", "Internet Search", "Not implemented yet"));
+            results.Add(new UIResultItem(Environment.CurrentDirectory + "/Images/WebIcon.png", "Internet Search", "Not implemented yet"));
 
             
             QueryEnd(results);

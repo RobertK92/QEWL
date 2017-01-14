@@ -67,7 +67,7 @@ namespace QEWL
             foreach (KeyValuePair<Type, QueryHandler> qHandlers in QueryHandlers)
             {
                 qHandlers.Value.OnQueryBegin    += () => { FrameLoadResults.Visibility = Visibility.Visible; };
-                qHandlers.Value.OnQueryEnd      += (QueryResults results) => { FrameLoadResults.Visibility = Visibility.Hidden; };
+                qHandlers.Value.OnQueryEnd      += (UIResults results) => { FrameLoadResults.Visibility = Visibility.Hidden; };
                 qHandlers.Value.OnScanComplete  += () => { Query(_cachedQuery); };
                 qHandlers.Value.Scan();
             }
@@ -90,7 +90,7 @@ namespace QEWL
             {
                 if (ListBoxResults.SelectedIndex >= 0)
                 {
-                    QueryResultItem item = (QueryResultItem)ListBoxResults.SelectedItem;
+                    UIResultItem item = (UIResultItem)ListBoxResults.SelectedItem;
                     if (item != null)
                     {
                         _previewer.PreviewFromQueryResultItem(item);

@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Windows.Controls;
 using Native;
+using System.Runtime.InteropServices;
 
 namespace QEWL
 {
@@ -54,7 +55,7 @@ namespace QEWL
                 Parallel.ForEach(readyDrives, (DriveInfo drive) =>
                 {
                     Log.Message(string.Format("Scanning drive {0}: [{1}] ASync...", drive.VolumeLabel, drive.Name));
-                    QueryResultItem result = new QueryResultItem(true, drive.Name, drive.Name);
+                    QueryResultItem result = new QueryResultItem(drive.Name);
                     AddItem(result);
                     ScanSubDirsAndFiles(drive.RootDirectory, true);
                 });
@@ -75,15 +76,13 @@ namespace QEWL
 
         public void SortBigList()
         {
-            BigResultList = BigResultList.Where(x => x != null).OrderBy(y => y.ResultName).ToList();
+            BigResultList = BigResultList.Where(x => x != null).OrderBy(y => Path.GetFileName(y.path)).ToList();
         }
 
         private void AddItem(QueryResultItem item)
         {
-            if (item != null)
-            {
+            if(item != null)
                 BigResultList.Add(item);
-            }
         }
 
         int recDepth = 0;
@@ -112,7 +111,7 @@ namespace QEWL
                     {
                         Stopwatch timer = Stopwatch.StartNew();
                         ScanSubDirsAndFiles(dir);
-                        QueryResultItem result = new QueryResultItem(true, dir.Name, dir.FullName);
+                        QueryResultItem result = new QueryResultItem(dir.FullName);
                         AddItem(result);
                     });
                 }
@@ -121,7 +120,7 @@ namespace QEWL
                     foreach (DirectoryInfo dir in dirs)
                     {
                         ScanSubDirsAndFiles(dir);
-                        QueryResultItem result = new QueryResultItem(true, dir.Name, dir.FullName);
+                        QueryResultItem result = new QueryResultItem(dir.FullName);
                         AddItem(result);
                     }
                 }
@@ -129,7 +128,7 @@ namespace QEWL
                 // Scan files.
                 foreach (FileInfo file in files)
                 {
-                    QueryResultItem result = new QueryResultItem(true, file.Name, file.FullName);
+                    QueryResultItem result = new QueryResultItem(file.FullName);
                     AddItem(result);
                 }
             }
@@ -137,28 +136,6 @@ namespace QEWL
             {
                 //Log.Warning(e.Message);
             }
-        }
-        private static int CalcLevenshteinDistance(string a, string b)
-        {
-            if (String.IsNullOrEmpty(a) || String.IsNullOrEmpty(b)) return 0;
-
-            int lengthA = a.Length;
-            int lengthB = b.Length;
-            var distances = new int[lengthA + 1, lengthB + 1];
-            for (int i = 0; i <= lengthA; distances[i, 0] = i++) ;
-            for (int j = 0; j <= lengthB; distances[0, j] = j++) ;
-
-            for (int i = 1; i <= lengthA; i++)
-                for (int j = 1; j <= lengthB; j++)
-                {
-                    int cost = b[j - 1] == a[i - 1] ? 0 : 1;
-                    distances[i, j] = Math.Min
-                        (
-                        Math.Min(distances[i - 1, j] + 1, distances[i, j - 1] + 1),
-                        distances[i - 1, j - 1] + cost
-                        );
-                }
-            return distances[lengthA, lengthB];
         }
 
         private int FindClosestResultIndex(string query, int startIndex = 0, int substringLength = 1, int closest = -1)
@@ -169,7 +146,7 @@ namespace QEWL
             string querySubString = query.Substring(0, substringLength);
             for (int i = startIndex; i < BigResultList.Count; i++)
             {
-                string name = BigResultList[i].resultNameLowerCase;
+                string name = Path.GetFileName(BigResultList[i].path).ToLower();
                 if (substringLength < name.Length)
                 {
                     if (name.Substring(0, substringLength) == querySubString)
@@ -195,13 +172,15 @@ namespace QEWL
             if (closestIndex != -1)
             {
                 Log.Message(BigResultList[closestIndex]);
-                QueryResults results = new QueryResults();
+                UIResults results = new UIResults();
                 for (int i = 0; i < MaxResultsShown; i++)
                 {
                     int index = (closestIndex + i);
                     if (index < BigResultList.Count && index > 0)
                     {
-                        results.Add(BigResultList[index]);
+                        string path = BigResultList[index].path;
+                        UIResultItem uiItem = new UIResultItem(true, Path.GetFileName(path), path);
+                        results.Add(uiItem);
                     }
                 }
 
@@ -214,16 +193,16 @@ namespace QEWL
             }
         }
 
-        protected override IOrderedEnumerable<QueryResultItem> OrderResults(QueryResults currentOrder, string query)
+        protected override IOrderedEnumerable<UIResultItem> OrderResults(UIResults currentOrder, string query)
         {
             //IOrderedEnumerable<QueryResultItem> sortedByDiscLength = currentOrder.OrderBy(x => x.ResultDesc.Length);
             return null;
         }
         
-        protected override void OnResultItemsAddedForShow(IEnumerable<QueryResultItem> results, ListBox listBoxResults)
+        protected override void OnResultItemsAddedForShow(IEnumerable<UIResultItem> results, ListBox listBoxResults)
         {
             _iconResultInvokers.Clear();
-            foreach(QueryResultItem result in results)
+            foreach(UIResultItem result in results)
             {
                 _iconResultInvokers.Enqueue(() => 
                 {
@@ -252,7 +231,7 @@ namespace QEWL
             _iconTimer.Start();
         }
 
-        private void AddIconToResult(QueryResultItem result)
+        private void AddIconToResult(UIResultItem result)
         {
             if (result.iconFromFile)
             {
@@ -279,7 +258,7 @@ namespace QEWL
             }
         }
 
-        protected override bool OnConfirmed(QueryResultItem result)
+        protected override bool OnConfirmed(UIResultItem result)
         {
             string path = result.ResultDesc;
             if (!string.IsNullOrWhiteSpace(path))

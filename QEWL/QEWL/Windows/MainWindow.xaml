@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="QEWL" UseLayoutRounding="True" Height="539.938" Width="1000" ResizeMode="NoResize" ToolTip="QEWL" AllowsTransparency="True" WindowStyle="None" Background="{x:Null}" Foreground="{x:Null}" ShowInTaskbar="False" Topmost="True">
     <Window.Resources>
-        <ObjectDataProvider x:Key="resultList" ObjectType="{x:Type local:QueryResults}"/>
+        <ObjectDataProvider x:Key="resultList" ObjectType="{x:Type local:UIResults}"/>
         <DataTemplate x:Key="resultTemplate">
             <Grid VerticalAlignment="Top" HorizontalAlignment="Left" Height="Auto">
                 <Image x:Name="Icon" Source="{Binding Path=ResultIcon}" Width="40" Height="40" RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased" HorizontalAlignment="Left" VerticalAlignment="Top" />

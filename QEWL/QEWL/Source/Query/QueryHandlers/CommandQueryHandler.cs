@@ -32,17 +32,17 @@ namespace QEWL
         
         protected override void OnQuery(string text)
         {
-            QueryResults results = new QueryResults();
+            UIResults results = new UIResults();
             foreach (KeyValuePair<string, Command> cmd in _commands)
             {
-                results.Add(new QueryResultItem("Images/CommandIcon.png", cmd.Key, cmd.Value.Description));
+                results.Add(new UIResultItem("Images/CommandIcon.png", cmd.Key, cmd.Value.Description));
             }
 
             ShowResults(results, text);
             QueryEnd(results);
         }
         
-        protected override bool OnConfirmed(QueryResultItem result)
+        protected override bool OnConfirmed(UIResultItem result)
         {
             string text = result.ResultName.ToLower();
             if (_commands.ContainsKey(text))

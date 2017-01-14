@@ -11,48 +11,48 @@ namespace QEWL
     public abstract class QueryHandler
     {
         protected abstract void OnQuery(string text);
-        protected abstract bool OnConfirmed(QueryResultItem result);
+        protected abstract bool OnConfirmed(UIResultItem result);
         protected abstract void OnScan();
         
         public int MaxResultsShown          { get; set; }
         public MainWindow MainWindow        { get; private set; }
         public bool IsScanning              { get; private set; }
-        public QueryResults ShownResults    { get; private set; }
+        public UIResults ShownResults    { get; private set; }
 
         protected Dictionary<IntPtr, ImageSource> IconCache { get; private set; }
 
         public event Action OnScanComplete              = delegate { };
         public event Action OnQueryBegin                = delegate { };
-        public event Action<QueryResults> OnQueryEnd    = delegate { };
+        public event Action<UIResults> OnQueryEnd    = delegate { };
         
         private object _queryDictLock = new object();
         
         public QueryHandler(MainWindow mainWindow)
         {
-            ShownResults = new QueryResults();
+            ShownResults = new UIResults();
             IconCache = new Dictionary<IntPtr, ImageSource>();
             MainWindow = mainWindow;
             MaxResultsShown = 32;
         }
 
-        protected virtual IOrderedEnumerable<QueryResultItem> OrderResults(QueryResults currentOrder, string query)
+        protected virtual IOrderedEnumerable<UIResultItem> OrderResults(UIResults currentOrder, string query)
         {
             return null;
         }
 
-        protected virtual void OnResultItemsAddedForShow(IEnumerable<QueryResultItem> results, ListBox listBoxResults) { }
-        protected virtual void OnResultsShown(QueryResults shownResults) { }
+        protected virtual void OnResultItemsAddedForShow(IEnumerable<UIResultItem> results, ListBox listBoxResults) { }
+        protected virtual void OnResultsShown(UIResults shownResults) { }
 
-        public void ShowResults(QueryResults results, string query)
+        public void ShowResults(UIResults results, string query)
         {
-            IOrderedEnumerable<QueryResultItem> ordered = results.SortByNameRelevance(query);
+            IOrderedEnumerable<UIResultItem> ordered = results.SortByNameRelevance(query);
             ordered = OrderResults(results, query);
 
             if (ordered != null)
             {
-                QueryResults sortedResults = new QueryResults();
+                UIResults sortedResults = new UIResults();
                 int resultCount = 0;
-                foreach (QueryResultItem result in ordered)
+                foreach (UIResultItem result in ordered)
                 {
                     if (resultCount >= MaxResultsShown)
                         break;
@@ -99,7 +99,7 @@ namespace QEWL
             OnScanComplete();
         }
 
-        protected void QueryEnd(QueryResults results)
+        protected void QueryEnd(UIResults results)
         {
             OnQueryEnd(results);
         }
@@ -108,7 +108,7 @@ namespace QEWL
         {
             if (MainWindow.ListBoxResults.SelectedItem != null)
             {
-                QueryResultItem item = (QueryResultItem)MainWindow.ListBoxResults.SelectedItem;
+                UIResultItem item = (UIResultItem)MainWindow.ListBoxResults.SelectedItem;
                 Log.Message(string.Format("Confirmed item: {0}", item.ResultName));
                 return OnConfirmed(item);
             }
