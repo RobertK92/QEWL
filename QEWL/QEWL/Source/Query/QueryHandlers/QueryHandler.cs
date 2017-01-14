@@ -35,9 +35,9 @@ namespace QEWL
             MaxResultsShown = 32;
         }
 
-        protected virtual IOrderedEnumerable<QueryResultItem> OrderResults(IOrderedEnumerable<QueryResultItem> currentOrder, string query)
+        protected virtual IOrderedEnumerable<QueryResultItem> OrderResults(QueryResults currentOrder, string query)
         {
-            return currentOrder;
+            return null;
         }
 
         protected virtual void OnResultItemsAddedForShow(IEnumerable<QueryResultItem> results, ListBox listBoxResults) { }
@@ -46,22 +46,32 @@ namespace QEWL
         public void ShowResults(QueryResults results, string query)
         {
             IOrderedEnumerable<QueryResultItem> ordered = results.SortByNameRelevance(query);
-            ordered = OrderResults(ordered, query);
+            ordered = OrderResults(results, query);
 
-            QueryResults sortedResults = new QueryResults();
-            int resultCount = 0;
-            foreach (QueryResultItem result in ordered)
+            if (ordered != null)
             {
-                if (resultCount >= MaxResultsShown)
-                    break;
-                sortedResults.Add(result);
-                resultCount++;
+                QueryResults sortedResults = new QueryResults();
+                int resultCount = 0;
+                foreach (QueryResultItem result in ordered)
+                {
+                    if (resultCount >= MaxResultsShown)
+                        break;
+                    sortedResults.Add(result);
+                    resultCount++;
+                }
+                
+                ShownResults = sortedResults;
+                OnResultItemsAddedForShow(sortedResults, MainWindow.ListBoxResults);
+
+                MainWindow.ListBoxResults.ItemsSource = sortedResults;
+            }
+            else
+            {
+                ShownResults = results;
+                OnResultItemsAddedForShow(results, MainWindow.ListBoxResults);
+                MainWindow.ListBoxResults.ItemsSource = results;
             }
 
-            ShownResults = sortedResults;
-            OnResultItemsAddedForShow(sortedResults, MainWindow.ListBoxResults);
-
-            MainWindow.ListBoxResults.ItemsSource = sortedResults;
             if (MainWindow.ListBoxResults.HasItems)
             {
                 MainWindow.ListBoxResults.Visibility = Visibility.Visible;
@@ -113,65 +123,6 @@ namespace QEWL
                 MainWindow.ListBoxResults.ItemsSource = null;
             }
             OnQuery(text);
-        }
-
-        protected void DistributeResultInDictionaryTree(QueryResultItem result, QueryNode dictionary)
-        {
-            #region Explaination
-            // Distribute this result over it's alphabetical children.
-            // Determine in what query dictionaries we put this result in.
-            // e.g. Git will be added to g, g's-i, and g's-i's-t.
-            // - g
-            //    *git
-            //    - a..
-            //    - i
-            //      *git
-            //      - t
-            //        *git
-            #endregion
-
-            string name = result.ResultName.ToLower();
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                QueryNode parent = dictionary;
-                foreach (char letter in name)
-                {
-                    lock (_queryDictLock)
-                    {
-                        QueryNode inner = parent.FindInnerNode(letter);
-                        if (inner == null)
-                        {
-                            inner = new QueryNode(letter);
-                            parent.nodes.Add(inner);
-                        }
-                        
-                        inner.results.Add(result);
-                        parent = inner;
-                    }
-                }
-            }
-        }
-
-        protected QueryNode FindDeepestDictionaryForQuery(string query, QueryNode parent)
-        {
-            QueryNode result = null;
-            foreach (char letter in query)
-            {
-                QueryNode inner = parent.FindInnerNode(letter);
-                if (inner != null)
-                {
-                    result = inner;
-                }
-                if (result != null)
-                {
-                    parent = result;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return result;
         }
     }
 }

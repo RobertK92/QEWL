@@ -26,4 +26,17 @@ namespace QEWL
             return -1;
         }
     }
+
+    public static class QueryResultsExtensions
+    {
+        public static QueryResults MakeQueryResults(this IEnumerable<QueryResultItem> b)
+        {
+            QueryResults results = new QueryResults();
+            foreach (QueryResultItem item in b)
+            {
+                results.Add(item);
+            }
+            return results;
+        }
+    }
 }

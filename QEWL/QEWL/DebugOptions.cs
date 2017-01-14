@@ -4,6 +4,6 @@ namespace QEWL
 {
     public static class DebugOptions
     {
-        public const int SystemQueryDepthLimit = 4000;
+        public const int SystemQueryDepthLimit = int.MaxValue;
     }
 }

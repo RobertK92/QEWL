@@ -90,7 +90,6 @@
     <Compile Include="Source\Commands\ShutdownCommand.cs" />
     <Compile Include="Source\Commands\TestCommand.cs" />
     <Compile Include="Source\Preview\Previewer.cs" />
-    <Compile Include="Source\Query\QueryNode.cs" />
     <Compile Include="Source\Query\QueryHandlers\CommandQueryHandler.cs" />
     <Compile Include="Source\Query\QueryHandlers\QueryHandler.cs" />
     <Compile Include="Source\Query\QueryHandlers\SystemQueryHandler.cs" />

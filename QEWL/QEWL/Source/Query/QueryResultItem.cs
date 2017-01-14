@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.IO;
 using System.Windows.Media;
 
 namespace QEWL
@@ -12,11 +13,13 @@ namespace QEWL
         public ImageSource ResultIconBitmap { get; set; }
         
         public bool iconFromFile;
-        
+        public string resultNameLowerCase;
+                
         public QueryResultItem(string resultIcon, string resultName, string resultDesc)
         {
             ResultIcon = string.Format("{0}/{1}", Environment.CurrentDirectory, resultIcon);
             ResultName = resultName;
+            resultNameLowerCase = ResultName.ToLower();
             ResultDesc = resultDesc;
         }
 
