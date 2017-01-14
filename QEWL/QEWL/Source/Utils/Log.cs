@@ -173,7 +173,8 @@ namespace Utils
             long mb = -1;
             try
             {
-                mb = Process.GetCurrentProcess().WorkingSet64 / 1000000;
+                //mb = Process.GetCurrentProcess().WorkingSet64 / 1000000;
+                mb = GC.GetTotalMemory(true) / 1000000;
             }
             catch(OutOfMemoryException e)
             {

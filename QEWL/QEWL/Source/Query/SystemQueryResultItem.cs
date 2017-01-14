@@ -1,11 +1,19 @@
-﻿namespace QEWL
+﻿using System.Text;
+
+namespace QEWL
 {
     public sealed class SystemQueryResultItem 
     {
-        public readonly string path;
+        public readonly byte[] path;
+
         public SystemQueryResultItem(string path)
         {
-            this.path = path;
+            this.path = Encoding.UTF8.GetBytes(path);
+        }
+        
+        public string GetPathString()
+        {
+            return Encoding.UTF8.GetString(path);
         }
     }
 }

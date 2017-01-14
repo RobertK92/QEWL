@@ -76,7 +76,7 @@ namespace QEWL
 
         public void SortBigList()
         {
-            BigResultList = BigResultList.Where(x => x != null).OrderBy(y => Path.GetFileName(y.path)).ToList();
+            BigResultList = BigResultList.Where(x => x != null).OrderBy(y => Path.GetFileName(y.GetPathString())).ToList();
         }
 
         private void AddItem(SystemQueryResultItem item)
@@ -146,7 +146,7 @@ namespace QEWL
             string querySubString = query.Substring(0, substringLength);
             for (int i = startIndex; i < BigResultList.Count; i++)
             {
-                string name = Path.GetFileName(BigResultList[i].path).ToLower();
+                string name = Path.GetFileName(BigResultList[i].GetPathString()).ToLower();
                 if (substringLength < name.Length)
                 {
                     if (name.Substring(0, substringLength) == querySubString)
@@ -178,7 +178,7 @@ namespace QEWL
                     int index = (closestIndex + i);
                     if (index < BigResultList.Count && index > 0)
                     {
-                        string path = BigResultList[index].path;
+                        string path = BigResultList[index].GetPathString();
                         UIResultItem uiItem = new UIResultItem(true, Path.GetFileName(path), path);
                         results.Add(uiItem);
                     }
