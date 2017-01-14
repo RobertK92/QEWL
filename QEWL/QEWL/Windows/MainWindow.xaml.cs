@@ -17,7 +17,7 @@ namespace QEWL
         public const float HEIGHT_PERCENTAGE = 0.15f;
         public const float WIDTH_PERCENTAGE = 0.5f;
         public const int ACTIVATION_KEY_TIMER_INTERVAL_MS = 100;
-        public const int MIN_TIME_BETWEEN_QUERIES_MS = 500;
+        public const int MIN_TIME_BETWEEN_QUERIES_MS = 10;
 
         public const string WEB_PREFIX = "!";
         public const string CMD_PREFIX = "/";
@@ -34,8 +34,7 @@ namespace QEWL
         private bool _modkeyIsDown;
         private bool _textChangedRecently;
         private DispatcherTimer _queryTimer;
-        private string _cachedQuery;
-        private string _lastSuccessfulQuery;
+        private string _lastQuery;
 
         private QueryHandler _activeQueryHandler;
         private Previewer _previewer;
@@ -66,9 +65,12 @@ namespace QEWL
             Log.ReportMemoryUsage();
             foreach (KeyValuePair<Type, QueryHandler> qHandlers in QueryHandlers)
             {
-                qHandlers.Value.OnQueryBegin    += () => { FrameLoadResults.Visibility = Visibility.Visible; };
-                qHandlers.Value.OnQueryEnd      += (UIResults results) => { FrameLoadResults.Visibility = Visibility.Hidden; };
-                qHandlers.Value.OnScanComplete  += () => { Query(_cachedQuery); };
+                qHandlers.Value.OnQueryEnd += (results, query) => { _lastQuery = query; };
+                qHandlers.Value.OnScanComplete  += () => 
+                {
+                    FrameLoadResults.Visibility = Visibility.Hidden;
+                    Query(TextBoxSearchBar.Text.ToLower());
+                };
                 qHandlers.Value.Scan();
             }
 
@@ -79,11 +81,13 @@ namespace QEWL
                 if (_textChangedRecently)
                 {
                     _textChangedRecently = false;
-                    if (_lastSuccessfulQuery != _cachedQuery)
-                        Query(_cachedQuery);
+                    if (_lastQuery != TextBoxSearchBar.Text)
+                    {
+                        Query(TextBoxSearchBar.Text.ToLower());
+                    }
                 }
-                _queryTimer.Stop();
             };
+            _queryTimer.Start();
 
             _previewer = new Previewer(PreviewGrid, PreviewImage, PreviewName, PreviewDesc);
             ListBoxResults.SelectionChanged += (sender, args) =>
@@ -136,14 +140,14 @@ namespace QEWL
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
+            _textChangedRecently = true;
             PreviewName.Text = string.Empty;
             PreviewDesc.Text = string.Empty;
             PreviewImage.Source = null;
 
             string text = TextBoxSearchBar.Text;
-            _lastSuccessfulQuery = string.Empty;
-            _cachedQuery = text;
-
+            _lastQuery = string.Empty;
+            
             // Capatalise first letter
             if (text.Length == 1)
             {
@@ -167,23 +171,10 @@ namespace QEWL
                     HideResultsPane();
                 }
             }
-
-            // Don't query if we queried within MIN_TIME_BETWEEN_QUERIES_MS
-            if (_textChangedRecently)
-                return;
-
-            _textChangedRecently = true;
-            Query(text);
         }
 
         public void Query(string query)
         {
-            if (_queryTimer.IsEnabled)
-            {
-                _queryTimer.Stop();
-            }
-            _queryTimer.Start();
-            
             // Scroll to top
             if (ListBoxResults.HasItems)
             {
@@ -192,7 +183,7 @@ namespace QEWL
                 viewer.ScrollToTop();
             }
 
-            if (!string.IsNullOrEmpty(query))
+            if (!string.IsNullOrWhiteSpace(query))
             {
                 if (query.StartsWith(CMD_PREFIX))
                 {
@@ -209,7 +200,6 @@ namespace QEWL
                     _activeQueryHandler = QueryHandlers[typeof(SystemQueryHandler)];
                     _activeQueryHandler.Query(query);
                 }
-                _lastSuccessfulQuery = query;
             }
         }
 

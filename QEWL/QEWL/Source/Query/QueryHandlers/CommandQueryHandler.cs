@@ -39,7 +39,7 @@ namespace QEWL
             }
 
             ShowResults(results, text);
-            QueryEnd(results);
+            QueryEnd(results, text);
         }
         
         protected override bool OnConfirmed(UIResultItem result)

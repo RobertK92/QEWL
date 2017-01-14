@@ -26,10 +26,13 @@ namespace QEWL
 
         private Queue<Action> _iconResultInvokers = new Queue<Action>();
         private DispatcherTimer _iconTimer = new DispatcherTimer();
-        
+
+        private BackgroundWorker _queryWorker = new BackgroundWorker();
+
         public SystemQueryHandler(MainWindow mainWindow)
             : base(mainWindow)
         {
+            _queryWorker.WorkerSupportsCancellation = true;
             BigResultList = new List<SystemQueryResultItem>();
             RootIgnorePaths = new List<string>();
             
@@ -162,35 +165,54 @@ namespace QEWL
             return FindClosestResultIndex(query, startIndex, substringLength, closest);
         }
 
+        
         protected override void OnQuery(string query)
         {
             if (IsScanning)
                 return;
             
             string lowerCaseQuery = query.ToLower();
-            int closestIndex = FindClosestResultIndex(lowerCaseQuery);
-            if (closestIndex != -1)
-            {
-                Log.Message(BigResultList[closestIndex]);
-                UIResults results = new UIResults();
-                for (int i = 0; i < MaxResultsShown; i++)
-                {
-                    int index = (closestIndex + i);
-                    if (index < BigResultList.Count && index > 0)
-                    {
-                        string path = BigResultList[index].GetPathString();
-                        UIResultItem uiItem = new UIResultItem(true, Path.GetFileName(path), path);
-                        results.Add(uiItem);
-                    }
-                }
+            int closestIndex = -1;
 
-                ShowResults(results, lowerCaseQuery);
-                QueryEnd(results);
-            }
-            else
+            if(_queryWorker.IsBusy)
             {
-                QueryEnd(null);
+                _queryWorker.CancelAsync();
+                _queryWorker.Dispose();
+                _queryWorker = new BackgroundWorker();
+                _queryWorker.WorkerSupportsCancellation = true;
             }
+
+            _queryWorker.DoWork += (sender, args) =>
+            {
+                closestIndex = FindClosestResultIndex(lowerCaseQuery); // heavy CPU
+            };
+            _queryWorker.RunWorkerCompleted += (sender, args) =>
+            {
+                if (closestIndex != -1)
+                {
+                    UIResults results = new UIResults();
+                    Log.Message(string.Format("Last query result: {0}", Path.GetFileName(BigResultList[closestIndex].GetPathString())));
+                    for (int i = 0; i < MaxResultsShown; i++)
+                    {
+                        int index = (closestIndex + i);
+                        if (index < BigResultList.Count && index > 0)
+                        {
+                            string path = BigResultList[index].GetPathString();
+                            string file = Path.GetFileName(path);
+                            UIResultItem uiItem = new UIResultItem(true, file, path);
+                            results.Add(uiItem);
+                        }
+                    }
+
+                    ShowResults(results, lowerCaseQuery);
+                    QueryEnd(results, query);
+                }
+                else
+                {
+                    QueryEnd(null, query);
+                }
+            };
+            _queryWorker.RunWorkerAsync();
         }
 
         protected override IOrderedEnumerable<UIResultItem> OrderResults(UIResults currentOrder, string query)

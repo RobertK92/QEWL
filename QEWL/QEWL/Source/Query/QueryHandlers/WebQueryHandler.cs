@@ -33,7 +33,7 @@ namespace QEWL
             results.Add(new UIResultItem(Environment.CurrentDirectory + "/Images/WebIcon.png", "Internet Search", "Not implemented yet"));
 
             
-            QueryEnd(results);
+            QueryEnd(results, text);
         }
     }
 }

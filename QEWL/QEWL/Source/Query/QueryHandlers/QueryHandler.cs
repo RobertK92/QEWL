@@ -21,9 +21,9 @@ namespace QEWL
 
         protected Dictionary<IntPtr, ImageSource> IconCache { get; private set; }
 
-        public event Action OnScanComplete              = delegate { };
-        public event Action OnQueryBegin                = delegate { };
-        public event Action<UIResults> OnQueryEnd    = delegate { };
+        public event Action OnScanComplete                  = delegate { };
+        public event Action OnQueryBegin                    = delegate { };
+        public event Action<UIResults, string> OnQueryEnd   = delegate { };
         
         private object _queryDictLock = new object();
         
@@ -62,7 +62,6 @@ namespace QEWL
                 
                 ShownResults = sortedResults;
                 OnResultItemsAddedForShow(sortedResults, MainWindow.ListBoxResults);
-
                 MainWindow.ListBoxResults.ItemsSource = sortedResults;
             }
             else
@@ -99,9 +98,9 @@ namespace QEWL
             OnScanComplete();
         }
 
-        protected void QueryEnd(UIResults results)
+        protected void QueryEnd(UIResults results, string query)
         {
-            OnQueryEnd(results);
+            OnQueryEnd(results, query);
         }
 
         public bool Confirm()
